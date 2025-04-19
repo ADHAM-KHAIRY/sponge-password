@@ -2,7 +2,6 @@
 
 A comprehensive password strength evaluation tool that analyzes passwords using multiple security criteria to help users create and maintain strong, secure passwords.
 
-![Sponge Password Checker](https://via.placeholder.com/800x200?text=Sponge+Password+Checker)
 
 ## Features
 
@@ -29,7 +28,7 @@ A comprehensive password strength evaluation tool that analyzes passwords using 
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/sponge-password.git
+   git clone https://github.com/ADHAM-KHAIRY/sponge-password.git
    cd sponge-password
    ```
 
