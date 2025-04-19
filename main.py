@@ -90,3 +90,19 @@ class AdvancedPasswordChecker:
         entropy = math.log2(char_set_size) * len(password)
         return entropy
 
+    def check_repetitive_patterns(self, password):
+        """Check for repetitive patterns like 'aaa', '111', etc."""
+        issues = []
+        pattern = re.compile(r'(.)\1{2,}')  # Same character repeated 3+ times
+        if pattern.search(password):
+            issues.append("Contains repetitive characters (e.g., 'aaa', '111')")
+        
+        # Check for repeated sequences (e.g., abcabc)
+        for i in range(2, len(password)//2 + 1):
+            for j in range(len(password) - i*2 + 1):
+                if password[j:j+i] == password[j+i:j+i*2]:
+                    issues.append(f"Contains repeated sequence: '{password[j:j+i]}'")
+                    break
+            
+        return issues
+
