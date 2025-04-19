@@ -105,4 +105,43 @@ class AdvancedPasswordChecker:
                     break
             
         return issues
+    
+    def check_keyboard_patterns(self, password):
+        """Check for keyboard patterns"""
+        password_lower = password.lower()
+        for pattern in self.keyboard_patterns:
+            if pattern in password_lower:
+                return True
+        
+        # Check for diagonal patterns
+        diagonals = ["qaz", "wsx", "edc", "rfv", "tgb", "yhn", "ujm"]
+        for diag in diagonals:
+            if diag in password_lower:
+                return True
+                
+        return False
+
+    def check_date_patterns(self, password):
+        """Check for date patterns in the password"""
+        # Common date formats: MMDDYYYY, DDMMYYYY, MMDDYY, DDMMYY, YYYY
+        date_patterns = [
+            r'\d{2}[/\-_.]\d{2}[/\-_.]\d{2,4}',  # MM/DD/YYYY or similar
+            r'\d{8}',  # MMDDYYYY or DDMMYYYY
+            r'\d{6}',  # MMDDYY or DDMMYY
+            r'\d{4}',  # Year like 1990, 2021
+        ]
+        
+        current_year = datetime.now().year
+        years = [str(year) for year in range(current_year-100, current_year+1)]
+        
+        for pattern in date_patterns:
+            if re.search(pattern, password):
+                return True
+                
+        for year in years:
+            if year in password:
+                return True
+                
+        return False
+    
 
