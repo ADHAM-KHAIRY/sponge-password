@@ -334,3 +334,54 @@ class AdvancedPasswordChecker:
         self.password_history[-1]["score"] = results["score"]
             
         return results
+
+    def print_password_analysis(self, results):
+        """Display formatted password analysis results"""
+        print("\n" + "="*60)
+        print(f"PASSWORD STRENGTH: {results['strength'].upper()}")
+        print(f"Score: {results['score']}/{results['max_score']}")
+        print("="*60)
+        
+        # Print feedback
+        print("\nANALYSIS:")
+        for item in results["feedback"]:
+            print(f"  • {item}")
+        
+        # Print entropy and cracking time
+        print(f"\nENTROPY: {results['entropy']} bits")
+        print(f"ESTIMATED CRACK TIME: {results['crack_time_estimate']}")
+        
+        # Print suggestions
+        if results["suggestions"]:
+            print("\nSUGGESTIONS:")
+            for suggestion in results["suggestions"]:
+                print(f"  • {suggestion}")
+                
+        # Show generated password suggestion
+        print("\nPASSWORD SUGGESTION:")
+        print(f"  {results['generated_password']}")
+        print("\nNote: Generated passwords are not stored and are shown only once.")
+        print("="*60)
+        
+    def password_history_stats(self):
+        """Return statistics about previously checked passwords"""
+        if not self.password_history:
+            return "No password history available"
+            
+        total_checks = len(self.password_history)
+        avg_length = sum(entry["length"] for entry in self.password_history) / total_checks
+        avg_score = sum(entry["score"] for entry in self.password_history) / total_checks
+        
+        strengths = {
+            "Weak": len([p for p in self.password_history if p["score"] <= 3]),
+            "Moderate": len([p for p in self.password_history if 3 < p["score"] <= 6]),
+            "Strong": len([p for p in self.password_history if 6 < p["score"] <= 8]),
+            "Very Strong": len([p for p in self.password_history if p["score"] > 8])
+        }
+        
+        return {
+            "total_checks": total_checks,
+            "avg_length": round(avg_length, 1),
+            "avg_score": round(avg_score, 1),
+            "strength_distribution": strengths
+        }
