@@ -5,46 +5,8 @@ import time
 import random
 import string
 from datetime import datetime
-# uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-# lowercase = "abcdefghijklmnopqrstuvwxyz"
-# nums = "0123456789"
-# schars = "!@#$%^&*()-_=+[{]}|;:" 
+import pyfiglet
 
-
-# print("""                                                                             
-#  ____                                 ____               
-# / ___| _ __   ___  _ __   __ _  ___  |  _ \ __ _ ___ ___ 
-# \___ \| '_ \ / _ \| '_ \ / _` |/ _ \ | |_) / _` / __/ __|
-#  ___) | |_) | (_) | | | | (_| |  __/ |  __/ (_| \__ \__ \
-# |____/| .__/ \___/|_| |_|\__, |\___| |_|   \__,_|___/___/
-#       |_|                |___/                           
-
-# """)
-# print("Sponge pass is a decent Password Strength Checker")
-# print("Enter a password you want to check [Press Enter to stop].")
-
-# def check_score(password):
-#     score = 0
-#     for i in uppercase:
-#         if i in password:
-#             score += 1
-#             break
-#     for i in lowercase:
-#         if i in password:
-#             score += 1
-#             break
-#     for i in nums:
-#         if i in password:
-#             score += 1
-#             break
-#     for i in schars:
-#         if i in password:
-#             score += 1
-#             break
-#     if len(password)>8:
-#         score += 1
-#     return score
-        
 class AdvancedPasswordChecker:
     def __init__(self):
         # Common passwords dictionary 
@@ -385,3 +347,68 @@ class AdvancedPasswordChecker:
             "avg_score": round(avg_score, 1),
             "strength_distribution": strengths
         }
+    
+def main():
+        checker = AdvancedPasswordChecker()
+        
+        # Print welcome message and instructions
+        print("\n" + "="*60)
+        ascii_banner = pyfiglet.figlet_format("Sponge Password")
+        print(ascii_banner)
+        print("="*60)
+        print("\nThis program evaluates password strength using multiple criteria:")
+        print("  • Length , Character variety , Entropy , Common patterns, Keyboard layouts and repetitions")
+        print("\nCommands:")
+        print("  • Enter a password to check its strength")
+        print("  • Type 'generate' to create a strong password")
+        print("  • Type 'stats' to see your password checking statistics")
+        print("  • Type 'help' to show this message again")
+        print("  • Type 'exit' or 'quit' to end the program")
+        print("\nNote: This tool is for educational purposes only. For security,")
+        print("      consider using a dedicated password manager.")
+        
+        while True:
+            print("\n" + "-"*60)
+            choice = input("Enter a command or password to check: ")
+            
+            if choice.lower() in ('exit', 'quit', 'q'):
+                print("Exiting password checker. Stay secure!")
+                break
+                
+            elif choice.lower() == 'help':
+                print("\nCommands:")
+                print("  • Enter a password to check its strength")
+                print("  • Type 'generate' to create a strong password")
+                print("  • Type 'stats' to see your password checking statistics")
+                print("  • Type 'help' to show this message")
+                print("  • Type 'exit' or 'quit' to end the program")
+                
+            elif choice.lower() == 'generate':
+                pwd = checker.generate_password_suggestion(16)
+                print(f"\nGenerated Strong Password: {pwd}")
+                print("(This password is not stored and won't be shown again)")
+                
+            elif choice.lower() == 'stats':
+                stats = checker.password_history_stats()
+                if isinstance(stats, str):
+                    print(f"\n{stats}")
+                else:
+                    print("\nPASSWORD CHECKING STATISTICS:")
+                    print(f"Total passwords checked: {stats['total_checks']}")
+                    print(f"Average password length: {stats['avg_length']} characters")
+                    print(f"Average password score: {stats['avg_score']}/10")
+                    print("\nStrength distribution:")
+                    for strength, count in stats['strength_distribution'].items():
+                        percentage = (count / stats['total_checks']) * 100
+                        print(f"  • {strength}: {count} ({percentage:.1f}%)")
+            
+            else:
+                # Check the entered password
+                results = checker.check_password(choice)
+                checker.print_password_analysis(results)
+                
+                # Add a small delay to allow user to read results
+                time.sleep(0.5)
+
+if __name__ == "__main__":
+    main()
