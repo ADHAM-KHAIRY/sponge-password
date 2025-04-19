@@ -72,3 +72,21 @@ class AdvancedPasswordChecker:
         # Initialize history of checked passwords
         self.password_history = []
 
+    def calculate_entropy(self, password):
+        """Calculate password entropy (measure of randomness)"""
+        char_set_size = 0
+        if re.search(r'[a-z]', password):
+            char_set_size += 26
+        if re.search(r'[A-Z]', password):
+            char_set_size += 26
+        if re.search(r'[0-9]', password):
+            char_set_size += 10
+        if re.search(r'[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]', password):
+            char_set_size += 33  # Common special characters count
+        
+        if char_set_size == 0:  # Fallback if nothing matched
+            char_set_size = 26
+            
+        entropy = math.log2(char_set_size) * len(password)
+        return entropy
+
