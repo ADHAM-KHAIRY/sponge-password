@@ -144,4 +144,45 @@ class AdvancedPasswordChecker:
                 
         return False
     
+    def generate_password_suggestion(self, length=16):
+        """Generate a strong password suggestion"""
+        char_sets = [
+            string.ascii_lowercase,
+            string.ascii_uppercase,
+            string.digits,
+            string.punctuation
+        ]
+        
+        # Ensure at least one character from each set
+        password = [random.choice(char_set) for char_set in char_sets]
+        
+        # Fill the rest with random characters from all sets
+        all_chars = ''.join(char_sets)
+        password.extend(random.choice(all_chars) for _ in range(length - len(password)))
+        
+        # Shuffle to avoid predictable positioning
+        random.shuffle(password)
+        return ''.join(password)
 
+    def estimate_crack_time(self, entropy):
+        """Estimate password cracking time based on entropy"""
+        # Assume 10 billion guesses per second (modern hardware)
+        guesses_per_second = 10000000000
+        
+        # 2^entropy is the average number of guesses needed
+        seconds = (2**entropy) / guesses_per_second
+        
+        if seconds < 60:
+            return f"Instant to {seconds:.1f} seconds"
+        elif seconds < 3600:
+            return f"About {seconds/60:.1f} minutes"
+        elif seconds < 86400:
+            return f"About {seconds/3600:.1f} hours"
+        elif seconds < 2592000:
+            return f"About {seconds/86400:.1f} days"
+        elif seconds < 31536000:
+            return f"About {seconds/2592000:.1f} months"
+        elif seconds < 315360000:  # 10 years
+            return f"About {seconds/31536000:.1f} years"
+        else:
+            return f"Over {seconds/31536000:.0f} years"
