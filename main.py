@@ -29,11 +29,9 @@ class AdvancedPasswordChecker:
         # Common substitutions
         self.substitutions = {
             'a': ['4', '@'], 'e': ['3'], 'i': ['1', '!'], 'o': ['0'], 
-            's': ['$', '5'], 'l': ['1'], 't': ['7', '+']
+            's': ['$', '5'], 'l': ['1']
         }
         
-        # Initialize history of checked passwords
-        self.password_history = []
 
     def calculate_entropy(self, password):
         """Calculate password entropy (measure of randomness)"""
@@ -166,13 +164,6 @@ class AdvancedPasswordChecker:
             "suggestions": [],
         }
         
-        # Record this check in history
-        self.password_history.append({
-            "timestamp": datetime.now(),
-            "length": len(password),
-            "score": 0  # Will update this later
-        })
-        
         # 1. Check length
         length = len(password)
         results["details"]["length"] = length
@@ -293,9 +284,6 @@ class AdvancedPasswordChecker:
         else:
             results["strength"] = "Very Strong"
             
-        # Update history with final score
-        self.password_history[-1]["score"] = results["score"]
-            
         return results
 
     def print_password_analysis(self, results):
@@ -326,28 +314,6 @@ class AdvancedPasswordChecker:
         print("\nNote: Generated passwords are not stored and are shown only once.")
         print("="*60)
         
-    def password_history_stats(self):
-        """Return statistics about previously checked passwords"""
-        if not self.password_history:
-            return "No password history available"
-            
-        total_checks = len(self.password_history)
-        avg_length = sum(entry["length"] for entry in self.password_history) / total_checks
-        avg_score = sum(entry["score"] for entry in self.password_history) / total_checks
-        
-        strengths = {
-            "Weak": len([p for p in self.password_history if p["score"] <= 3]),
-            "Moderate": len([p for p in self.password_history if 3 < p["score"] <= 6]),
-            "Strong": len([p for p in self.password_history if 6 < p["score"] <= 8]),
-            "Very Strong": len([p for p in self.password_history if p["score"] > 8])
-        }
-        
-        return {
-            "total_checks": total_checks,
-            "avg_length": round(avg_length, 1),
-            "avg_score": round(avg_score, 1),
-            "strength_distribution": strengths
-        }
     
 def main():
         checker = AdvancedPasswordChecker()
@@ -362,7 +328,6 @@ def main():
         print("\nCommands:")
         print("  • Enter a password to check its strength")
         print("  • Type 'generate' to create a strong password")
-        print("  • Type 'stats' to see your password checking statistics")
         print("  • Type 'help' to show this message again")
         print("  • Type 'exit' or 'quit' to end the program")
         print("\nNote: This tool is for educational purposes only. For security,")
@@ -380,7 +345,6 @@ def main():
                 print("\nCommands:")
                 print("  • Enter a password to check its strength")
                 print("  • Type 'generate' to create a strong password")
-                print("  • Type 'stats' to see your password checking statistics")
                 print("  • Type 'help' to show this message")
                 print("  • Type 'exit' or 'quit' to end the program")
                 
@@ -389,19 +353,6 @@ def main():
                 print(f"\nGenerated Strong Password: {pwd}")
                 print("(This password is not stored and won't be shown again)")
                 
-            elif choice.lower() == 'stats':
-                stats = checker.password_history_stats()
-                if isinstance(stats, str):
-                    print(f"\n{stats}")
-                else:
-                    print("\nPASSWORD CHECKING STATISTICS:")
-                    print(f"Total passwords checked: {stats['total_checks']}")
-                    print(f"Average password length: {stats['avg_length']} characters")
-                    print(f"Average password score: {stats['avg_score']}/10")
-                    print("\nStrength distribution:")
-                    for strength, count in stats['strength_distribution'].items():
-                        percentage = (count / stats['total_checks']) * 100
-                        print(f"  • {strength}: {count} ({percentage:.1f}%)")
             
             else:
                 # Check the entered password
